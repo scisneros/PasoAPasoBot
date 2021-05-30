@@ -1,3 +1,4 @@
+from constants import MAX_RESULTS
 import os
 import datetime
 from utils import try_msg
@@ -15,7 +16,18 @@ def start(update, context):
 
 
 def comuna(update, context):
-    logger.info(f"[Comando /comuna]")
+    logger.info(f"[Comando {update.message.text}]")
+    arg = update.message.text[(update.message.text.index(" ") + 1):]
+    matches = [comuna for comuna in data.current_data if comuna[0].lower().find(arg.lower()) >= 0]
+    message = ""
+    if len(matches) > MAX_RESULTS:
+        message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
+    for match in matches[:MAX_RESULTS]:
+        message += f"<b>{match[0]}</b> - Fase {match[1]} {match[2]}\n"
+    try_msg(context.bot,
+            chat_id=update.message.chat_id,
+            parse_mode="HTML",
+            text=message)
 
 # Admin Commands
 

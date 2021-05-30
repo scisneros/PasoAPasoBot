@@ -1,1 +1,1 @@
-CHECK_FIRST = False
+MAX_RESULTS = 10

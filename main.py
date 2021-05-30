@@ -16,7 +16,7 @@ from functions import fetch_data, check_for_changes, save_data
 
 def main():
     try:
-        with open(path.relpath("data/data_comunas", "r")) as datajsonfile:
+        with open("data/data_comunas", "r") as datajsonfile:
             data.current_data = json.load(datajsonfile)
         logger.info("Data cargada desde disco, se hará un chequeo de cambios inicial")
         check_first = True

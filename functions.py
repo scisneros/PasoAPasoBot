@@ -29,10 +29,10 @@ def check_for_changes(context):
     # check diff here
 
     data.current_data = data.new_data
-    
+
     save_data()
 
 
 def save_data():
-    with open(path.relpath('data/data_comunas'), "w") as infographic_data_file:
+    with open("data/data_comunas", "w") as infographic_data_file:
         json.dump(data.current_data, infographic_data_file, indent=4)
