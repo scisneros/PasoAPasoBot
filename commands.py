@@ -1,19 +1,29 @@
 import os
 import datetime
+from utils import try_msg
 
+from bot import dp, jq
+import data
 from config.logger import logger
 
 
 def start(update, context):
-    logger.info(f"[Comando /start desde admin {update.message.from_user.id}]")
+    logger.info(f"[Comando /start]")
+    try_msg(context.bot,
+            chat_id=update.message.chat_id,
+            text="Holi!")
 
 
 def comuna(update, context):
-    logger.info(f"[Comando /comuna desde admin {update.message.from_user.id}]")
+    logger.info(f"[Comando /comuna]")
 
+# Admin Commands
 
 def force_check(update, context):
-    logger.info(f"[Comando /force_check desde admin  {update.message.from_user.id}]")
+    logger.info(
+        f"[Comando /force_check desde admin  {update.message.from_user.id}]")
+    job_fetch = jq.get_jobs_by_name("job_fetch")[0]
+    job_fetch.run(dp)
 
 
 def get_log(update, context):

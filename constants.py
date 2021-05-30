@@ -1,1 +1,1 @@
-CHECK_FIRST = True
+CHECK_FIRST = False
