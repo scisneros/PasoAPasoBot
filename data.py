@@ -1,2 +1,2 @@
-current_data = {}  # Lista de comunas de última consulta
-new_data = {}  # Lista de comunas de nueva consulta
+current_data = {}  # Communes data saved since last fetch
+new_data = {}  # Communes data temporarily saved from a new fetch

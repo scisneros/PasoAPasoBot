@@ -18,10 +18,10 @@ def main():
     try:
         with open("data/data_comunas", "r") as datajsonfile:
             data.current_data = json.load(datajsonfile)
-        logger.info("Data cargada desde disco, se hará un chequeo de cambios inicial")
+        logger.info("Data loaded from local, initial check for changes will be made")
         check_first = True
     except OSError:
-        logger.info("No se encontró data en disco, fetch inicial se hará sin chequear cambios.")
+        logger.info("No local data was found, initial scraping will be made without checking for changes.")
         check_first = False
         data.current_data = fetch_data()
         save_data()

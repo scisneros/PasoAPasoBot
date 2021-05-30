@@ -14,20 +14,14 @@ def try_msg(bot, attempts=2, **params):
     while attempt <= attempts:
         try:
             bot.send_message(**params)
-        except Unauthorized:
-            logger.error(f"Chat {chat_id} bloqueó al bot. Abortando mensaje")
-            break
-        except BadRequest as e:
-            logger.error(f"Mensaje al chat {chat_id} arrojó BadRequest: {e}. Abortando mensaje.")
-            raise
         except TelegramError as e:
-            logger.error(f"[Intento {attempt}/{attempts}] Mensaje al chat {chat_id} arrojó el siguiente error: {type(e).__name__}: {e}")
+            logger.error(f"[Attempt {attempt}/{attempts}] Messaging chat {chat_id} raised following error: {type(e).__name__}: {e}")
         else:
             break
         attempt += 1
 
     if attempt > attempts:
-        logger.error(f"Máximos intentos para el chat {str(chat_id)}. Abortando mensaje.")
+        logger.error(f"Max attempts reached for chat {str(chat_id)}. Aborting message and raising exception.")
 
 
 def send_long_message(bot, **params):

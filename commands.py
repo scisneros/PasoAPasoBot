@@ -9,14 +9,14 @@ from config.logger import logger
 
 
 def start(update, context):
-    logger.info(f"[Comando /start]")
+    logger.info(f"[Command /start]")
     try_msg(context.bot,
             chat_id=update.message.chat_id,
             text="Holi!")
 
 
 def comuna(update, context):
-    logger.info(f"[Comando {update.message.text}]")
+    logger.info(f"[Command {update.message.text}]")
     arg = update.message.text[(update.message.text.index(" ") + 1):]
     matches = [comuna for comuna in data.current_data if comuna[0].lower().find(arg.lower()) >= 0]
     message = ""
@@ -31,7 +31,7 @@ def comuna(update, context):
 
 
 def estadisticas(update, context):
-    logger.info("[Comando /estadisticas]")
+    logger.info("[Command /estadisticas]")
     counts = [0, 0, 0, 0, 0]
     for comuna in data.current_data:
         counts[int(comuna[1]) - 1] += 1
@@ -48,13 +48,13 @@ def estadisticas(update, context):
 
 def force_check(update, context):
     logger.info(
-        f"[Comando /force_check desde admin  {update.message.from_user.id}]")
+        f"[Command /force_check from admin {update.message.from_user.id}]")
     job_fetch = jq.get_jobs_by_name("job_fetch")[0]
     job_fetch.run(dp)
 
 
 def get_log(update, context):
-    logger.info(f"[Comando /get_log desde admin  {update.message.from_user.id}]")
+    logger.info(f"[Command /get_log from admin {update.message.from_user.id}]")
     context.bot.send_document(chat_id=update.message.from_user.id,
                               document=open(os.path.relpath('bot.log'), 'rb'),
                               filename=f"pasoapasobot_log_{datetime.now().strftime('%d%b%Y-%H%M%S')}.txt")
