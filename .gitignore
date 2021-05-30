@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Virtual Studio Code
+/.vscode/
+
+# Telegram bot
+/config/auth.py
