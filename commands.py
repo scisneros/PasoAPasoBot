@@ -23,11 +23,26 @@ def comuna(update, context):
     if len(matches) > MAX_RESULTS:
         message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
     for match in matches[:MAX_RESULTS]:
-        message += f"{PHASES_EMOJIS[match[1]]} <b>{match[0]}</b> - Fase {match[1]} {match[2]}\n"
+        message += f"{PHASES_EMOJIS[int(match[1])]} <b>{match[0]}</b> - Fase {match[1]} {match[2]}\n"
     try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
             text=message)
+
+
+def estadisticas(update, context):
+    logger.info("[Comando /estadisticas]")
+    counts = [0, 0, 0, 0, 0]
+    for comuna in data.current_data:
+        counts[int(comuna[1]) - 1] += 1
+    message = "Comunas por paso:\n"
+    for i in range(len(counts)):
+        message += f"{PHASES_EMOJIS[i+1]} <b>Paso {i+1}</b>: {counts[i]}\n"
+    try_msg(context.bot,
+            chat_id=update.message.chat_id,
+            parse_mode="HTML",
+            text=message)
+
 
 # Admin Commands
 

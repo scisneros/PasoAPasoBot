@@ -8,7 +8,7 @@ import data
 import constants
 
 from bot import updater, dp, jq
-from commands import start, comuna, get_log, force_check
+from commands import estadisticas, start, comuna, get_log, force_check
 from config.auth import admin_ids
 from config.logger import logger
 from functions import fetch_data, check_for_changes, save_data
@@ -30,6 +30,7 @@ def main():
 
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('comuna', comuna))
+    dp.add_handler(CommandHandler('estadisticas', estadisticas))
     # Admin commands
     dp.add_handler(CommandHandler('force_check', force_check, filters=Filters.user(admin_ids)))
     dp.add_handler(CommandHandler('get_log', get_log, filters=Filters.user(admin_ids)))
