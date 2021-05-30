@@ -26,7 +26,7 @@ def main():
         data.current_data = fetch_data()
         save_data()
 
-    jq.run_repeating(check_for_changes, interval=300, first=(1 if check_first else None), name="job_fetch")
+    jq.run_repeating(check_for_changes, interval=constants.FETCH_INTERVAL, first=(1 if check_first else None), name="job_fetch")
 
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('comuna', comuna))
