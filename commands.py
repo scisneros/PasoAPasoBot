@@ -23,7 +23,7 @@ def comuna(update, context):
     if len(matches) > MAX_RESULTS:
         message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
     for match in matches[:MAX_RESULTS]:
-        message += f"{PHASES_EMOJIS[int(match[1])]} <b>{match[0]}</b> - Fase {match[1]} {match[2]}\n"
+        message += f"{PHASES_EMOJIS[int(match[1])]} <b>{match[0]}</b> - Paso {match[1]} {match[2]}\n"
     try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
