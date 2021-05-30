@@ -12,12 +12,20 @@ def start(update, context):
     logger.info(f"[Command /start]")
     try_msg(context.bot,
             chat_id=update.message.chat_id,
-            text="Holi!")
+            parse_mode="HTML",
+            text="¡Hola! Utiliza el comando \"/comuna <i>[nombre-de-comuna]\"</i> para consultar su estado en el plan Paso a Paso.")
 
 
 def comuna(update, context):
     logger.info(f"[Command {update.message.text}]")
-    arg = update.message.text[(update.message.text.index(" ") + 1):]
+    try:
+        arg = update.message.text[(update.message.text.index(" ") + 1):]
+    except ValueError:
+        try_msg(context.bot,
+            chat_id=update.message.chat_id,
+            parse_mode="HTML",
+            text="Envía el nombre o parte del nombre de la comuna que quieres consultar.\nEj: <i>\"/comuna santiago\"</i>")
+        return
     matches = [comuna for comuna in data.current_data if comuna[0].lower().find(arg.lower()) >= 0]
     message = ""
     if len(matches) > MAX_RESULTS:
