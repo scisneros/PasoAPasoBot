@@ -1,6 +1,6 @@
 from constants import MAX_RESULTS, PHASES_EMOJIS
 import os
-import datetime
+from datetime import datetime
 from utils import try_msg
 
 from bot import dp, jq
