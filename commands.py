@@ -32,6 +32,9 @@ def comuna(update, context):
         message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
     for match in matches[:MAX_RESULTS]:
         message += f"{PHASES_EMOJIS[int(match['paso'])]} <b>{match['name']}</b> - Paso {match['paso']} {match['info']}\n"
+    
+    if len(message) == 0:
+        message = f"No encuentro ninguna comuna con <i>{arg}</i>."
     try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
