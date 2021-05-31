@@ -26,7 +26,7 @@ def comuna(update, context):
             parse_mode="HTML",
             text="Envía el nombre o parte del nombre de la comuna que quieres consultar.\nEj: <i>\"/comuna santiago\"</i>")
         return
-    matches = [{"name": comuna, **(data.current_data[comuna])} for comuna in data.current_data.keys() if comuna.lower().find(arg.lower()) >= 0]
+    matches = [{"name": comuna, **vals} for comuna, vals in data.current_data.items() if comuna.lower().find(arg.lower()) >= 0]
     message = ""
     if len(matches) > MAX_RESULTS:
         message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
