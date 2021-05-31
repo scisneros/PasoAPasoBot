@@ -1,4 +1,4 @@
-from constants import CHANGE_DAY, PASOS_NAMES, PHASES_EMOJIS
+from constants import CHANGE_DAY, PASOS_NAMES, PASOS_EMOJIS
 import json
 from os import path
 from utils import send_long_message, slugify
@@ -27,7 +27,7 @@ def fetch_data():
 
     data_dict = {}
     for comuna in infographic_data:
-        data_dict[comuna[0]] = {"paso": comuna[1], "info": comuna[2], "slug": slugify(comuna[0])}
+        data_dict[comuna[0]] = {"paso": comuna[1], "info": comuna[2].strip(" "), "slug": slugify(comuna[0])}
 
     return data_dict
 
@@ -65,7 +65,7 @@ def notify_changes(bot, changes, up_count, down_count):
         curr = int(comuna_data["paso"])
         curr_info = comuna_data["info"]
         action = "Avanza" if curr > prev else "Retrocede"
-        message += f"<b>{comuna}</b>: {action}\n<del><i>Paso {prev} {PASOS_NAMES[prev]}</i></del>\n{PHASES_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n\n"
+        message += f"<b>{comuna}</b>: {action}\n<del><i>Paso {prev} {PASOS_NAMES[prev]}</i></del>\n{PASOS_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n\n"
 
     current_day = int(datetime.now().strftime('%w'))
     if current_day in CHANGE_DAY:
