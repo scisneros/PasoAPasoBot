@@ -20,7 +20,7 @@ def start(update, context):
 
 
 def comuna(update, context):
-    logger.info(f"[Command {update.message.text}]")
+    logger.info(f"[Command {update.message.text} from {update.message.chat_id}]")
     try:
         arg = update.message.text[(update.message.text.index(" ") + 1):]
     except ValueError:
