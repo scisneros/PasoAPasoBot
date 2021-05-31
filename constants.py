@@ -2,12 +2,12 @@ FETCH_INTERVAL = 300
 
 MAX_RESULTS = 10
 
-PHASES_EMOJIS = {
+PASOS_EMOJIS = {
     1: "\U0001F534",
     2: "\U0001F7E0",
     3: "\U0001F7E1",
-    4: "\U0001F7E2",
-    5: "\U0001F535",
+    4: "\U0001F535",
+    5: "\U000026AA",
 }
 
 PASOS_NAMES = {
