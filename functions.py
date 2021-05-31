@@ -20,7 +20,12 @@ def fetch_data():
     scraped_data = [line for line in response.content.decode().split('\n') if "window.infographicData" in line]
     scraped_data_json = json.loads(scraped_data[0].replace("<script>window.infographicData=", "", 1).replace(";</script>", "", 1))
     infographic_data = scraped_data_json["elements"]["content"]["content"]["entities"]["3f026fbf-998f-4ae2-852b-94fa3a2f71d4"]["props"]["chartData"]["data"][0][1:]
-    return infographic_data
+
+    data_dict = {}
+    for comuna in infographic_data:
+        data_dict[comuna[0]] = {"paso": comuna[1], "info": comuna[2]}
+
+    return data_dict
 
 
 def check_for_changes(context):

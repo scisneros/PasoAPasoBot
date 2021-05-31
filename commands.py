@@ -26,12 +26,12 @@ def comuna(update, context):
             parse_mode="HTML",
             text="Envía el nombre o parte del nombre de la comuna que quieres consultar.\nEj: <i>\"/comuna santiago\"</i>")
         return
-    matches = [comuna for comuna in data.current_data if comuna[0].lower().find(arg.lower()) >= 0]
+    matches = [{"name": comuna, **(data.current_data[comuna])} for comuna in data.current_data.keys() if comuna.lower().find(arg.lower()) >= 0]
     message = ""
     if len(matches) > MAX_RESULTS:
         message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
     for match in matches[:MAX_RESULTS]:
-        message += f"{PHASES_EMOJIS[int(match[1])]} <b>{match[0]}</b> - Paso {match[1]} {match[2]}\n"
+        message += f"{PHASES_EMOJIS[int(match['paso'])]} <b>{match['name']}</b> - Paso {match['paso']} {match['info']}\n"
     try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
