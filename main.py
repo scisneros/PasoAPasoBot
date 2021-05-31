@@ -16,7 +16,7 @@ from functions import fetch_data, check_for_changes, save_data
 
 locale.setlocale(locale.LC_TIME, "es")
 
-def main():    
+def main():
     try:
         with open("data/data_comunas", "r") as datajsonfile:
             data.current_data = json.load(datajsonfile)

@@ -43,11 +43,15 @@ def comuna(update, context):
         message += f"{PASOS_EMOJIS[int(match['paso'])]} <b>{match['name']}</b> - Paso {match['paso']} {match['info']}\n"
     
     if not matches:
-        message = f"No encuentro ninguna comuna con <i>{arg}</i>."
-    try_msg(context.bot,
+        try_msg(context.bot,
             chat_id=update.message.chat_id,
-            parse_mode="HTML",
-            text=message)
+            parse_mode="Markdown",
+            text=f"No encuentro ninguna comuna con _{arg}_.")
+    else:
+        try_msg(context.bot,
+                chat_id=update.message.chat_id,
+                parse_mode="HTML",
+                text=message)
 
 
 def comuna_private(update, context):
