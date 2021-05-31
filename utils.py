@@ -1,11 +1,17 @@
 from telegram import TelegramError, constants as tg_constants
 from telegram.error import BadRequest, Unauthorized
+from unidecode import unidecode
 
 from config.logger import logger
 
 
-def full_strip(st):
-    return st.replace("\n", "").replace("\t", "").strip(" ")
+def slugify(value):
+    value = value.replace("\n", "").replace("\t", "").strip(" ")  # Remove empty spaces
+    value = value.replace(" - ", "-").replace("'", "")  # Remove special cases
+    value = value.replace(" ", "-")
+    value = unidecode(value)  # Remove accents
+    value = value.lower()
+    return value
 
 
 def try_msg(bot, attempts=2, **params):

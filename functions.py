@@ -1,7 +1,7 @@
 from constants import CHANGE_DAY, PASOS_NAMES, PHASES_EMOJIS
 import json
 from os import path
-from utils import send_long_message
+from utils import send_long_message, slugify
 
 import requests
 from datetime import datetime
@@ -27,7 +27,7 @@ def fetch_data():
 
     data_dict = {}
     for comuna in infographic_data:
-        data_dict[comuna[0]] = {"paso": comuna[1], "info": comuna[2]}
+        data_dict[comuna[0]] = {"paso": comuna[1], "info": comuna[2], "slug": slugify(comuna[0])}
 
     return data_dict
 

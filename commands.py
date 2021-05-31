@@ -1,7 +1,7 @@
 from constants import MAX_RESULTS, PHASES_EMOJIS
 import os
 from datetime import datetime
-from utils import try_msg
+from utils import slugify, try_msg
 
 from bot import dp, jq
 import data
@@ -26,14 +26,17 @@ def comuna(update, context):
             parse_mode="HTML",
             text="Envía el nombre o parte del nombre de la comuna que quieres consultar.\nEj: <i>\"/comuna santiago\"</i>")
         return
-    matches = [{"name": comuna, **vals} for comuna, vals in data.current_data.items() if comuna.lower().find(arg.lower()) >= 0]
+    slug_arg = slugify(arg)
+    matches = []
+    if slug_arg:
+        matches = [{"name": comuna, **vals} for comuna, vals in data.current_data.items() if vals["slug"].find(slug_arg) >= 0]
     message = ""
     if len(matches) > MAX_RESULTS:
         message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
     for match in matches[:MAX_RESULTS]:
         message += f"{PHASES_EMOJIS[int(match['paso'])]} <b>{match['name']}</b> - Paso {match['paso']} {match['info']}\n"
     
-    if len(message) == 0:
+    if not matches:
         message = f"No encuentro ninguna comuna con <i>{arg}</i>."
     try_msg(context.bot,
             chat_id=update.message.chat_id,
@@ -44,8 +47,8 @@ def comuna(update, context):
 def estadisticas(update, context):
     logger.info("[Command /estadisticas]")
     counts = [0, 0, 0, 0, 0]
-    for comuna in data.current_data:
-        counts[int(comuna[1]) - 1] += 1
+    for comuna, comuna_data in data.current_data.items():
+        counts[int(comuna_data["paso"]) - 1] += 1
     message = "Comunas por paso:\n"
     for i in range(len(counts)):
         message += f"{PHASES_EMOJIS[i+1]} <b>Paso {i+1}</b>: {counts[i]}\n"
