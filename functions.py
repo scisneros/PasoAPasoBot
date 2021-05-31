@@ -36,27 +36,36 @@ def check_for_changes(context):
     data.new_data = fetch_data()
 
     changes = {}
+    up_count = 0
+    down_count = 0
     for comuna, old_comuna_data in data.current_data.items():
         new_comuna_data = data.new_data[comuna]
         if old_comuna_data["paso"] != new_comuna_data["paso"]:
             changes[comuna] = new_comuna_data.copy()
             changes[comuna]["prev"] = old_comuna_data["paso"]
+            if old_comuna_data["paso"] < new_comuna_data["paso"]:
+                up_count += 1
+            else:
+                down_count += 1
     
     if changes:
-        notify_changes(context.bot, changes)
+        notify_changes(context.bot, changes, up_count, down_count)
 
     data.current_data = data.new_data
 
     save_data()
 
 
-def notify_changes(bot, changes):
-    message = f"<b>[Cambios detectados]</b>\n<i>{datetime.now().strftime('%A %d/%m/%y %H:%M').capitalize()}</i>\n\n"
+def notify_changes(bot, changes, up_count, down_count):
+    message = f"<b>[Cambios detectados]</b>\n"
+    message += f"Avances: {up_count} - Retrocesos: {down_count}\n"
+    message += f"<i>{datetime.now().strftime('%A %d/%m/%y %H:%M').capitalize()}</i>\n\n"
     for comuna, comuna_data in changes.items():
         prev = int(comuna_data["prev"])
         curr = int(comuna_data["paso"])
         curr_info = comuna_data["info"]
-        message += f"<b>{comuna}</b>\n<del><i>Paso {prev} {PASOS_NAMES[prev]}</i></del>\n{PHASES_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n\n"
+        action = "Avanza" if curr > prev else "Retrocede"
+        message += f"<b>{comuna}</b>: {action}\n<del><i>Paso {prev} {PASOS_NAMES[prev]}</i></del>\n{PHASES_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n\n"
 
     current_day = int(datetime.now().strftime('%w'))
     if current_day in CHANGE_DAY:
