@@ -1,5 +1,6 @@
 import json
 
+import locale
 from os import path
 
 from telegram.ext import CommandHandler, Filters
@@ -13,8 +14,9 @@ from config.auth import admin_ids
 from config.logger import logger
 from functions import fetch_data, check_for_changes, save_data
 
+locale.setlocale(locale.LC_TIME, "es")
 
-def main():
+def main():    
     try:
         with open("data/data_comunas", "r") as datajsonfile:
             data.current_data = json.load(datajsonfile)

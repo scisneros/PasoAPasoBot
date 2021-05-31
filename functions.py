@@ -1,10 +1,14 @@
+from constants import CHANGE_DAY, PASOS_NAMES, PHASES_EMOJIS
 import json
 from os import path
+from utils import send_long_message
 
 import requests
+from datetime import datetime
 from requests import RequestException
 
 import data
+from config.auth import channel_id
 from config.logger import logger
 
 
@@ -31,11 +35,37 @@ def fetch_data():
 def check_for_changes(context):
     data.new_data = fetch_data()
 
-    # check diff here
+    changes = {}
+    for comuna, old_comuna_data in data.current_data.items():
+        new_comuna_data = data.new_data[comuna]
+        if old_comuna_data["paso"] != new_comuna_data["paso"]:
+            changes[comuna] = new_comuna_data.copy()
+            changes[comuna]["prev"] = old_comuna_data["paso"]
+    
+    if changes:
+        notify_changes(context.bot, changes)
 
     data.current_data = data.new_data
 
     save_data()
+
+
+def notify_changes(bot, changes):
+    message = f"<b>[Cambios detectados]</b>\n<i>{datetime.now().strftime('%A %d/%m/%y %H:%M').capitalize()}</i>\n\n"
+    for comuna, comuna_data in changes.items():
+        prev = int(comuna_data["prev"])
+        curr = int(comuna_data["paso"])
+        curr_info = comuna_data["info"]
+        message += f"<b>{comuna}</b>\n<del><i>Paso {prev} {PASOS_NAMES[prev]}</i></del>\n{PHASES_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n\n"
+
+    current_day = int(datetime.now().strftime('%w'))
+    if current_day in CHANGE_DAY:
+        message += f"<b>Avances</b> vigentes desde el <b>{CHANGE_DAY[current_day]['up']['day']}</b> a las {CHANGE_DAY[current_day]['up']['time']}\n"
+        message += f"<b>Retrocesos</b> vigentes desde el <b>{CHANGE_DAY[current_day]['down']['day']}</b> a las {CHANGE_DAY[current_day]['down']['time']}\n"
+    send_long_message(bot,
+                      chat_id=channel_id,
+                      parse_mode="HTML",
+                      text=message)
 
 
 def save_data():
