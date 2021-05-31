@@ -1,4 +1,4 @@
-from constants import MAX_RESULTS, PHASES_EMOJIS
+from constants import MAX_RESULTS, PASOS_EMOJIS
 import os
 from datetime import datetime
 from utils import slugify, try_msg
@@ -10,10 +10,13 @@ from config.logger import logger
 
 def start(update, context):
     logger.info(f"[Command /start]")
+    message = "¡Hola! Utiliza el comando \"/comuna <i>[nombre-de-comuna]\"</i> para consultar su estado en el plan Paso a Paso.\n"
+    if update.message.chat.type == "private":
+        message += "\nSi me hablas por este chat privado, no es necesario incluir el comando \"/comuna\", tomaré todos los mensajes directos como consultas de comuna."
     try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
-            text="¡Hola! Utiliza el comando \"/comuna <i>[nombre-de-comuna]\"</i> para consultar su estado en el plan Paso a Paso.")
+            text=message)
 
 
 def comuna(update, context):
@@ -21,10 +24,13 @@ def comuna(update, context):
     try:
         arg = update.message.text[(update.message.text.index(" ") + 1):]
     except ValueError:
+        message = "Envía el nombre o parte del nombre de la comuna que quieres consultar.\nEj: <i>\"/comuna santiago\"</i>\n"
+        if update.message.chat.type == "private":
+            message += "\nSi me hablas por este chat privado, no es necesario incluir el comando \"/comuna\", tomaré todos los mensajes directos como consultas de comuna."
         try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
-            text="Envía el nombre o parte del nombre de la comuna que quieres consultar.\nEj: <i>\"/comuna santiago\"</i>")
+            text=message)
         return
     slug_arg = slugify(arg)
     matches = []
@@ -34,7 +40,7 @@ def comuna(update, context):
     if len(matches) > MAX_RESULTS:
         message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
     for match in matches[:MAX_RESULTS]:
-        message += f"{PHASES_EMOJIS[int(match['paso'])]} <b>{match['name']}</b> - Paso {match['paso']} {match['info']}\n"
+        message += f"{PASOS_EMOJIS[int(match['paso'])]} <b>{match['name']}</b> - Paso {match['paso']} {match['info']}\n"
     
     if not matches:
         message = f"No encuentro ninguna comuna con <i>{arg}</i>."
@@ -44,6 +50,11 @@ def comuna(update, context):
             text=message)
 
 
+def comuna_private(update, context):
+    update.message.text = "/comuna " + update.message.text
+    comuna(update, context)
+
+
 def estadisticas(update, context):
     logger.info("[Command /estadisticas]")
     counts = [0, 0, 0, 0, 0]
@@ -51,7 +62,7 @@ def estadisticas(update, context):
         counts[int(comuna_data["paso"]) - 1] += 1
     message = "Comunas por paso:\n"
     for i in range(len(counts)):
-        message += f"{PHASES_EMOJIS[i+1]} <b>Paso {i+1}</b>: {counts[i]}\n"
+        message += f"{PASOS_EMOJIS[i+1]} <b>Paso {i+1}</b>: {counts[i]}\n"
     try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
