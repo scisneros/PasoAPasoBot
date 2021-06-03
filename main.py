@@ -32,7 +32,7 @@ def main():
 
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('comuna', comuna))
-    dp.add_handler(MessageHandler(Filters.chat_type.private, comuna_private))
+    dp.add_handler(MessageHandler(Filters.chat_type.private & (~ Filters.command), comuna_private))
     dp.add_handler(CommandHandler('estadisticas', estadisticas))
     # Admin commands
     dp.add_handler(CommandHandler('force_check', force_check, filters=Filters.user(admin_ids)))
