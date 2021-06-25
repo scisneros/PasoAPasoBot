@@ -14,7 +14,7 @@ from config.logger import logger
 
 def fetch_data():
     url = "https://e.infogram.com/81277d3a-5813-46f7-a270-79d1768a70b2"
-    logger.info("Consultando data de pasos de comunas...")
+    logger.info("Fetching phases data...")
     try:
         response = requests.get(url)
     except RequestException as e:
