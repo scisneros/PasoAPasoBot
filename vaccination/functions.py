@@ -1,4 +1,4 @@
-from constants import MA_DAYS, MA_SMOOTHING, TARGET_POPULATION
+from constants import MA_DAYS, MA_SMOOTHING, TARGET_POPULATION, TARGET_POPULATION_THRESHOLD, TOTAL_POPULATION, TOTAL_POPULATION_THRESHOLD
 import csv
 from datetime import datetime, timedelta
 import json
@@ -58,8 +58,6 @@ def check_for_vaccination_changes(context):
     save_vaccination_processed_data()
 
     notify_vaccination_changes(context.bot)
-    
-    data.vaccination_last_eta = data.vaccination_data["eta"][-1]
 
 
 def process_vaccination_data():
@@ -68,16 +66,14 @@ def process_vaccination_data():
     second = data.vaccination_data["second"]
     unique = data.vaccination_data["unique"]
 
-    if not data.vaccination_last_eta and data.vaccination_data.get("eta"):
-        data.vaccination_last_eta = data.vaccination_data["eta"][-1]
-
     N = len(dates)
 
     done = []  # Second + Unique doses
     delta = []  # Differences in daily dones
     ma = []  # Delta Moving Averages
     ma_smoothed = []  # Smoothed Delta Moving Averages
-    eta = []  # Estimated Time of Arrival
+    eta_threshold_target = []  # Estimated Time of Arrival for target population threshold
+    eta_threshold_total = []  # Estimated Time of Arrival for total population threshold
 
     for i in range(N):
         done.append(second[i] + unique[i])
@@ -102,12 +98,16 @@ def process_vaccination_data():
     for i in range(N):
         this_day = dates[i]
         if ma_smoothed[i] > 0:
-            days_left = round(
-                (TARGET_POPULATION - done[i]) / ma_smoothed[i], 0)
-            if days_left < 1000:
-                eta.append(this_day + timedelta(days=days_left))
+            days_left_target = round(
+                (TARGET_POPULATION*TARGET_POPULATION_THRESHOLD - done[i]) / ma_smoothed[i], 0)
+            days_left_total = round(
+                (TOTAL_POPULATION*TOTAL_POPULATION_THRESHOLD - done[i]) / ma_smoothed[i], 0)
+            if days_left_target < 1000 and days_left_total < 1000:
+                eta_threshold_target.append(this_day + timedelta(days=days_left_target))
+                eta_threshold_total.append(this_day + timedelta(days=days_left_total))
                 continue
-        eta.append(None)
+        eta_threshold_target.append(None)
+        eta_threshold_total.append(None)
 
     data.vaccination_data = {
         "date": dates,
@@ -118,11 +118,9 @@ def process_vaccination_data():
         "delta": delta,
         "ma": ma,
         "ma_smoothed": ma_smoothed,
-        "eta": eta,
+        "eta_threshold_target": eta_threshold_target,
+        "eta_threshold_total": eta_threshold_total,
     }
-
-    if not data.vaccination_last_eta:
-        data.vaccination_last_eta = data.vaccination_data["eta"][-1]
 
 
 def notify_vaccination_changes(bot):
@@ -137,36 +135,33 @@ def notify_vaccination_changes(bot):
         data.vaccination_data['done'][-1]/TARGET_POPULATION)
     target_str = format_int(TARGET_POPULATION)
     delta_str = format_int(data.vaccination_data['delta'][-1])
-    ma_str = format_int(data.vaccination_data['ma_smoothed'][-1])
-    first_str = format_int(data.vaccination_data['first'][-1])
-    eta_str = data.vaccination_data['eta'][-1].strftime('%d de %B de %Y')
-    days_left = (data.vaccination_data['eta'][-1] - datetime.today()).days
-    days_left_delta = data.vaccination_last_eta - data.vaccination_data['eta'][-1]
-    days_comparison_emoji = ""
-    days_comparison_str = ""
-    if days_left_delta.days > 0:
-        days_comparison_emoji = "👍"
-        days_comparison_str = "mejor"
-    elif days_left_delta.days < 0:
-        days_comparison_emoji = "👎"
-        days_comparison_str = "más lento"
+    ma_str = format_int(data.vaccination_data['ma'][-1])
+    target_with_threshold = format_int(TARGET_POPULATION*TARGET_POPULATION_THRESHOLD)
+    eta_target_str = data.vaccination_data['eta_threshold_target'][-1].strftime('%d de %B de %Y')
+    days_left_target = (data.vaccination_data['eta_threshold_target'][-1] - datetime.today()).days
+    total_with_threshold = format_int(TOTAL_POPULATION*TOTAL_POPULATION_THRESHOLD)
+    eta_total_str = data.vaccination_data['eta_threshold_total'][-1].strftime('%d de %B de %Y')
+    days_left_total = (data.vaccination_data['eta_threshold_total'][-1] - datetime.today()).days
 
     message = f"<b>💉 [Actualización]</b> - <i>Datos al {update_date}</i>\n\n"
 
     message += f"<b>Vacunas totales:</b> {total_str}\n"
-    message += f"<b>Primera vacuna</b>: {first_str}\n"
-    message += f"<b>Segunda vacuna</b>: {second_str}\n"
-    message += f"<b>Vacuna dosis única</b>: {unique_str}\n\n"
+    message += f"<b>Primera vacuna:</b> {first_str}\n"
+    message += f"<b>Segunda vacuna:</b> {second_str}\n"
+    message += f"<b>Vacuna dosis única:</b> {unique_str}\n\n"
 
-    message += f"<b>Dosis completa (2da + Única)</b>: {done_str}\n"
-    message += f"<i>({percentage_str} de la población objetivo de {target_str} mayores de 12 años)</i>\n\n"
+    message += f"<b>Dosis completa (2da + Única):</b> {done_str}\n"
+    message += f"<b>Población objetivo:</b> {target_str} mayores de 12 años\n"
+    message += f"<b>Progreso:</b> {percentage_str} de la población objetivo\n\n"
 
-    message += f"<b>Vacunas del día</b>: {delta_str}\n"
-    message += f"<b>Promedio semanal</b>: {ma_str} vacs/día\n"
-    message += f"<b>Fecha estimada para completar público objetivo</b>:\n"
-    message += f"🗓 {eta_str} ({days_left} días)\n"
-    if days_left_delta.days != 0:
-        message += f"{days_comparison_emoji} {abs(days_left_delta.days)} días {days_comparison_str} que última actualización\n"
+    message += f"<b>Vacunas del día:</b> {delta_str}\n"
+    message += f"<b>Promedio semanal:</b> {ma_str} vacs/día\n\n"
+    message += f"<b>🗓 Estimación dosis completa en {int(TARGET_POPULATION_THRESHOLD*100)}% de la población objetivo:</b>\n"
+    message += f"<i>{target_with_threshold} mayores de 12 años</i>\n"
+    message += f"{eta_target_str} ({days_left_target} días)\n\n"
+    message += f"<b>🗓 Estimación dosis completa en {int(TOTAL_POPULATION_THRESHOLD*100)}% de la población total:</b>\n"
+    message += f"<i>{total_with_threshold} personas</i>\n"
+    message += f"{eta_total_str} ({days_left_total} días)\n"
 
     try_msg(bot,
             chat_id=vaccination_channel_id,
@@ -178,10 +173,13 @@ def save_vaccination_processed_data():
     processed_data = data.vaccination_data.copy()
     str_date = [(x.strftime('%Y-%m-%d') if x else None)
                 for x in processed_data["date"]]
-    str_eta = [(x.strftime('%Y-%m-%d') if x else None)
-               for x in processed_data["eta"]]
+    str_eta_target = [(x.strftime('%Y-%m-%d') if x else None)
+                      for x in processed_data["eta_threshold_target"]]
+    str_eta_total = [(x.strftime('%Y-%m-%d') if x else None)
+                     for x in processed_data["eta_threshold_total"]]
     processed_data["date"] = str_date
-    processed_data["eta"] = str_eta
+    processed_data["eta_threshold_target"] = str_eta_target
+    processed_data["eta_threshold_total"] = str_eta_total
     with open("data/data_vaccination", "w") as vaccination_data_file:
         json.dump(processed_data, vaccination_data_file, indent=4)
 
@@ -192,10 +190,13 @@ def load_vaccination_data():
             file_data = json.load(vaccination_data_file)
             datetime_date = [datetime.strptime(x, '%Y-%m-%d')
                              for x in file_data["date"]]
-            datetime_eta = [(datetime.strptime(x, '%Y-%m-%d') if x else None)
-                            for x in file_data["eta"]]
+            datetime_eta_target = [(datetime.strptime(x, '%Y-%m-%d') if x else None)
+                                   for x in file_data["eta_threshold_target"]]
+            datetime_eta_total = [(datetime.strptime(x, '%Y-%m-%d') if x else None)
+                                  for x in file_data["eta_threshold_total"]]
             file_data["date"] = datetime_date
-            file_data["eta"] = datetime_eta
+            file_data["eta_threshold_target"] = datetime_eta_target
+            file_data["eta_threshold_total"] = datetime_eta_total
             data.vaccination_data = file_data
         logger.info("Vaccination data loaded from local.")
     except OSError:
