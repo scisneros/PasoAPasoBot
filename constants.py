@@ -1,4 +1,5 @@
 FETCH_INTERVAL = 60
+FETCH_INTERVAL_VAC = 60
 
 MAX_RESULTS = 10
 
@@ -28,3 +29,8 @@ CHANGE_DAY = {
         "down": {"day": "sábado", "time": "5:00am"}
     }
 }
+
+MA_DAYS = 7
+MA_SMOOTHING = 5
+
+TARGET_POPULATION = 16696002

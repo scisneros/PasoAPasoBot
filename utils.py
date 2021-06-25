@@ -45,3 +45,7 @@ def send_long_message(bot, **params):
         send_long_message(bot, text=rest_text, **params)
     else:
         try_msg(bot, text=text, **params)
+
+
+def format_int(number):
+    return '{:,}'.format(int(number)).replace(',','.')
