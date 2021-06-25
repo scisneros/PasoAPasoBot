@@ -134,3 +134,6 @@ dmypy.json
 # Telegram bot
 /config/auth.py
 /db
+
+# Logs
+bot.log*
