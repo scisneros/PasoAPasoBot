@@ -9,7 +9,7 @@ import data
 import constants
 
 from bot import updater, dp, jq
-from commands import estadisticas, start, comuna, comuna_private, get_log, force_check
+from commands import estadisticas, region, start, comuna, comuna_private, get_log, force_check
 from config.auth import admin_ids
 from config.logger import logger
 from functions import fetch_data, check_for_changes, save_data
@@ -44,6 +44,7 @@ def main():
 
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('comuna', comuna))
+    dp.add_handler(CommandHandler('region', region))
     dp.add_handler(MessageHandler(Filters.chat_type.private & (~ Filters.command), comuna_private))
     dp.add_handler(CommandHandler('estadisticas', estadisticas))
     # Admin commands

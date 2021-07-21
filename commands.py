@@ -63,6 +63,51 @@ def comuna(update, context):
                 text=message)
 
 
+def region(update, context):
+    logger.info(f"[Command {update.message.text} from {update.message.chat_id}]")
+    try:
+        arg = update.message.text[(update.message.text.index(" ") + 1):]
+    except ValueError:
+        message = "Envía el nombre o parte del nombre de la región que quieres consultar.\nEj: <i>\"/region valparaiso\"</i>\n"
+        try_msg(context.bot,
+            chat_id=update.message.chat_id,
+            parse_mode="HTML",
+            text=message)
+        return
+    slug_arg = slugify(arg)
+    matches = []
+    for region in data.current_data["regiones"]:
+        result_index = region["slug"].find(slug_arg)
+        if result_index >= 0:
+            region_copy = region.copy()
+            region_copy["index"] = result_index
+            matches.append(region_copy)
+
+    message = ""
+    if len(matches) > 1:
+        message += f"<i>Encontré {len(matches)} regiones con ese término. Refina la búsqueda para mostrar el resultado.</i>\n"
+        for match in matches:
+            message += f"<b>{match['nombre']}</b>\n"
+
+    elif len(matches) == 1:
+        match = matches[0]
+        message += f"<b>{match['nombre']}</b>\n"
+        for comuna in match["comunas"]:
+            message += f"{PASOS_EMOJIS[int(comuna['paso'])]} <b>{comuna['nombre']}</b> - Paso {comuna['paso']} {comuna['info']}\n"
+    
+    if not matches:
+        try_msg(context.bot,
+            chat_id=update.message.chat_id,
+            parse_mode="Markdown",
+            text=f"No encuentro ninguna región con _{arg}_.")
+            
+    else:
+        try_msg(context.bot,
+                chat_id=update.message.chat_id,
+                parse_mode="HTML",
+                text=message)
+
+
 def comuna_private(update, context):
     update.message.text = "/comuna " + update.message.text
     comuna(update, context)
