@@ -108,7 +108,7 @@ def notify_changes(bot, changes, counts):
     message = ""
 
     for region in changes:
-        message += f"<b>— {region['nombre']} —</b>\n"
+        message += f"<b>[{region['nombre']}]</b>\n"
         message += "\n"
         for comuna in region["comunas"]:
             prev = int(comuna["prev"])
@@ -117,13 +117,15 @@ def notify_changes(bot, changes, counts):
             message += f"<b>{comuna['nombre']}</b>: {action}\n"
             message += f"  {PASOS_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n"
         message += "\n"
+        message += "——————————\n"
+        message += "\n"
 
     send_long_message(bot,
                       chat_id=channel_id,
                       parse_mode="HTML",
                       text=message,
                       max_length=1800,
-                      slice_str="\n<b>—")
+                      slice_str="\n<b>[")
 
 
 def get_steps_counts(current = True):
