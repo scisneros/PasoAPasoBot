@@ -32,17 +32,20 @@ def try_msg(bot, attempts=2, **params):
 
 def send_long_message(bot, **params):
     text = params.pop("text", "")
-    maxl = tg_constants.MAX_MESSAGE_LENGTH
+
+    params_copy = params.copy()
+    maxl = params.pop("max_length", tg_constants.MAX_MESSAGE_LENGTH)
+    slice_str = params.pop("slice_str", "\n")
     if len(text) > maxl:
-        slice_index = maxl
-        for i in range(maxl, -1, -1):
-            if text[i] == "\n":
-                slice_index = i
-                break
+        slice_index = text.rfind(slice_str, 0, maxl)
+        if slice_index <= 0:
+            slice_index = text.rfind("\n", 0, maxl)
+        if slice_index <= 0:
+            slice_index = maxl
         sliced_text = text[:slice_index]
         rest_text = text[slice_index + 1:]
         try_msg(bot, text=sliced_text, **params)
-        send_long_message(bot, text=rest_text, **params)
+        send_long_message(bot, text=rest_text, **params_copy)
     else:
         try_msg(bot, text=text, **params)
 
