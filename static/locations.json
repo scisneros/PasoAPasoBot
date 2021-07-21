@@ -481,6 +481,10 @@
                     "slug": "melipilla"
                 },
                 {
+                    "nombre": "Ñuñoa",
+                    "slug": "nunoa"
+                },
+                {
                     "nombre": "Padre Hurtado",
                     "slug": "padre-hurtado"
                 },
@@ -571,10 +575,6 @@
                 {
                     "nombre": "Vitacura",
                     "slug": "vitacura"
-                },
-                {
-                    "nombre": "Ñuñoa",
-                    "slug": "nunoa"
                 }
             ]
         },
@@ -879,6 +879,10 @@
                     "slug": "ninhue"
                 },
                 {
+                    "nombre": "Ñiquén",
+                    "slug": "niquen"
+                },
+                {
                     "nombre": "Pemuco",
                     "slug": "pemuco"
                 },
@@ -925,10 +929,6 @@
                 {
                     "nombre": "Yungay",
                     "slug": "yungay"
-                },
-                {
-                    "nombre": "Ñiquén",
-                    "slug": "niquen"
                 }
             ]
         },
