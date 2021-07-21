@@ -63,9 +63,11 @@ def comuna_private(update, context):
 def estadisticas(update, context):
     logger.info("[Command /estadisticas]")
     counts = get_steps_counts()
+    total = sum(counts)
+    percents = [round(x*100/total, 1) for x in counts]
     message = "Comunas por paso:\n"
     for i in range(len(counts)):
-        message += f"{PASOS_EMOJIS[i+1]} <b>Paso {i+1}</b>: {counts[i]}\n"
+        message += f"{PASOS_EMOJIS[i+1]} <b>Paso {i+1}</b>: {counts[i]} <i>({percents[i]}%)</i>\n"
     try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
