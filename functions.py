@@ -114,7 +114,7 @@ def notify_changes(bot, changes, counts):
             prev = int(comuna["prev"])
             curr = int(comuna["paso"])
             action = "Avanza" if curr > prev else "Retrocede"
-            message += f"<b>{comuna['nombre']}</b>: {action}\n"
+            message += f"<b>{comuna['nombre']}</b>: {action} a\n"
             message += f"  {PASOS_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n"
         message += "\n"
         message += "——————————\n"
