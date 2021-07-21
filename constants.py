@@ -21,7 +21,7 @@ PASOS_NAMES = {
 
 CHANGE_DAY = {
     1: {  # Monday
-        "up": {"day": "jueves", "time": "5:00am"},
+        "up": {"day": "martes", "time": "5:00am"},
         "down": {"day": "jueves", "time": "5:00am"}
     },
     4: {  # Thursday
