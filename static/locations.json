@@ -2,7 +2,7 @@
     "regiones": [
         {
             "nombre": "Región de Arica y Parinacota",
-            "slug": "arica-y-parinacota",
+            "slug": "region-de-arica-y-parinacota",
             "comunas": [
                 {
                     "nombre": "Arica",
@@ -24,7 +24,7 @@
         },
         {
             "nombre": "Región de Tarapacá",
-            "slug": "tarapaca",
+            "slug": "region-de-tarapaca",
             "comunas": [
                 {
                     "nombre": "Alto Hospicio",
@@ -58,7 +58,7 @@
         },
         {
             "nombre": "Región de Antofagasta",
-            "slug": "antofagasta",
+            "slug": "region-de-antofagasta",
             "comunas": [
                 {
                     "nombre": "Antofagasta",
@@ -100,7 +100,7 @@
         },
         {
             "nombre": "Región de Atacama",
-            "slug": "atacama",
+            "slug": "region-de-atacama",
             "comunas": [
                 {
                     "nombre": "Alto del Carmen",
@@ -142,7 +142,7 @@
         },
         {
             "nombre": "Región de Coquimbo",
-            "slug": "coquimbo",
+            "slug": "region-de-coquimbo",
             "comunas": [
                 {
                     "nombre": "Andacollo",
@@ -208,7 +208,7 @@
         },
         {
             "nombre": "Región de Valparaíso",
-            "slug": "valparaiso",
+            "slug": "region-de-valparaiso",
             "comunas": [
                 {
                     "nombre": "Algarrobo",
@@ -580,7 +580,7 @@
         },
         {
             "nombre": "Región del Libertador Gral. Bernardo O'Higgins",
-            "slug": "region-del-libertador-gral.-bernardo-ohiggins",
+            "slug": "region-del-libertador-gral-bernardo-ohiggins",
             "comunas": [
                 {
                     "nombre": "Chimbarongo",
@@ -1386,7 +1386,7 @@
         },
         {
             "nombre": "Región de Aysén del Gral. Carlos Ibáñez del Campo",
-            "slug": "region-aysen-del-gral.-carlos-ibanez-del-campo",
+            "slug": "region-de-aysen-del-gral-carlos-ibanez-del-campo",
             "comunas": [
                 {
                     "nombre": "Aysén",
