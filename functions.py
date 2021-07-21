@@ -102,7 +102,7 @@ def notify_changes(bot, changes, up_count, down_count):
 
 
 def get_stats():
-    counts = [0, 0, 0, 0, 0]
+    counts = [0, 0, 0, 0]
     for region in data.current_data["regiones"]:
         for comuna in region["comunas"]:
             counts[int(comuna["paso"]) - 1] += 1
