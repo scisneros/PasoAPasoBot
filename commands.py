@@ -68,7 +68,7 @@ def region(update, context):
     try:
         arg = update.message.text[(update.message.text.index(" ") + 1):]
     except ValueError:
-        message = "Envía el nombre o parte del nombre de la región que quieres consultar.\nEj: <i>\"/region valparaiso\"</i>\n"
+        message = "Envía el nombre o parte del nombre de la región que quieres consultar.\nEj: <i>\"/region valparaíso\"</i>\n"
         try_msg(context.bot,
             chat_id=update.message.chat_id,
             parse_mode="HTML",
