@@ -19,7 +19,15 @@ locale.setlocale(locale.LC_TIME, "es")
 
 def main():
     try:
-        with open("data/data_comunas", "r") as datajsonfile:
+        with open("static/locations.json", "r", encoding="utf8") as datajsonfile:
+            data.locations = json.load(datajsonfile)
+        logger.info("Locations data loaded.")
+    except OSError:
+        logger.error("Locations data not found. Exiting.")
+        return
+
+    try:
+        with open("data/data_comunas", "r", encoding="utf8") as datajsonfile:
             data.current_data = json.load(datajsonfile)
         logger.info("Comunas data loaded from local, initial check for changes will be made.")
         check_first = True

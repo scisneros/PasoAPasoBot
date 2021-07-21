@@ -1,8 +1,9 @@
 from constants import CHANGE_DAY, PASOS_NAMES, PASOS_EMOJIS
 import json
 from os import path
-from utils import send_long_message, slugify
+from utils import searchBySlug, send_long_message, slugify
 
+import copy
 import requests
 from datetime import datetime
 from requests import RequestException
@@ -10,7 +11,6 @@ from requests import RequestException
 import data
 from config.auth import channel_id
 from config.logger import logger
-
 
 def fetch_data():
     url = "https://e.infogram.com/81277d3a-5813-46f7-a270-79d1768a70b2"
@@ -25,9 +25,22 @@ def fetch_data():
     scraped_data_json = json.loads(scraped_data[0].replace("<script>window.infographicData=", "", 1).replace(";</script>", "", 1))
     infographic_data = scraped_data_json["elements"]["content"]["content"]["entities"]["3f026fbf-998f-4ae2-852b-94fa3a2f71d4"]["props"]["chartData"]["data"][0][1:]
 
-    data_dict = {}
+    comunas_dict = {}
     for comuna in infographic_data:
-        data_dict[comuna[0]] = {"paso": comuna[1], "info": comuna[2].strip(" "), "slug": slugify(comuna[0])}
+        comunas_dict[slugify(comuna[0])] = {"paso": comuna[1], "info": comuna[2].strip(" ")}
+
+    data_dict = {}
+    for region in data.locations["regiones"]:
+        comunas = []
+        for comuna in region["comunas"]:
+            comuna_data = comunas_dict.get(comuna["slug"], {})
+            comunas.append({
+                "nombre": comuna["nombre"],
+                "slug": comuna["slug"],
+                "paso": comuna_data.get("paso", "-1"),
+                "info": comuna_data.get("info", "")
+            })
+        data_dict.setdefault("regiones", []).append({"nombre": region["nombre"], "slug": region["slug"], "comunas": comunas})
 
     return data_dict
 
@@ -35,22 +48,30 @@ def fetch_data():
 def check_for_changes(context):
     data.new_data = fetch_data()
 
-    changes = {}
+    regiones_changes = []
     up_count = 0
     down_count = 0
-    for comuna, old_comuna_data in data.current_data.items():
-        new_comuna_data = data.new_data[comuna]
-        if old_comuna_data["paso"] != new_comuna_data["paso"]:
-            changes[comuna] = new_comuna_data.copy()
-            changes[comuna]["prev"] = old_comuna_data["paso"]
-            if old_comuna_data["paso"] < new_comuna_data["paso"]:
-                up_count += 1
-            else:
-                down_count += 1
-    
-    if changes:
-        notify_changes(context.bot, changes, up_count, down_count)
+    for old_region in data.current_data["regiones"]:
+        new_region = searchBySlug(old_region["slug"], data.new_data["regiones"])
+        comunas_changes = []
+        for old_comuna in old_region["comunas"]:
+            slug = old_comuna["slug"]
+            new_comuna = searchBySlug(slug, new_region["comunas"])
+            if old_comuna["paso"] != new_comuna["paso"]:
+                changed_comuna = new_comuna.copy()
+                changed_comuna["prev"] = old_comuna["paso"]
+                comunas_changes.append(changed_comuna)
 
+                if old_comuna["paso"] < new_comuna["paso"]:
+                    up_count += 1
+                else:
+                    down_count += 1
+        if comunas_changes:
+            regiones_changes.append({"nombre": new_region["nombre"], "comunas": comunas_changes})
+    
+    if regiones_changes:
+        notify_changes(context.bot, regiones_changes, up_count, down_count)
+    
     data.current_data = data.new_data
 
     save_data()
@@ -60,12 +81,15 @@ def notify_changes(bot, changes, up_count, down_count):
     message = f"<b>[Cambios detectados]</b>\n"
     message += f"Avances: {up_count} - Retrocesos: {down_count}\n"
     message += f"<i>{datetime.now().strftime('%A %d/%m/%y %H:%M').capitalize()}</i>\n\n"
-    for comuna, comuna_data in changes.items():
-        prev = int(comuna_data["prev"])
-        curr = int(comuna_data["paso"])
-        curr_info = comuna_data["info"]
-        action = "Avanza" if curr > prev else "Retrocede"
-        message += f"<b>{comuna}</b>: {action}\n<del><i>Paso {prev} {PASOS_NAMES[prev]}</i></del>\n{PASOS_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n\n"
+
+    for region in changes:
+        message += f"<b>{region['nombre']}</b>\n\n"
+        for comuna in region["comunas"]:
+            prev = int(comuna["prev"])
+            curr = int(comuna["paso"])
+            action = "Avanza" if curr > prev else "Retrocede"
+            message += f"<b>{comuna['nombre']}</b>: {action}\n<del><i>Paso {prev} {PASOS_NAMES[prev]}</i></del>\n{PASOS_EMOJIS[curr]} Paso {curr} {PASOS_NAMES[curr]}\n"
+        message += "\n"
 
     current_day = int(datetime.now().strftime('%w'))
     if current_day in CHANGE_DAY:
@@ -78,5 +102,5 @@ def notify_changes(bot, changes, up_count, down_count):
 
 
 def save_data():
-    with open("data/data_comunas", "w") as infographic_data_file:
-        json.dump(data.current_data, infographic_data_file, indent=4)
+    with open("data/data_comunas", "w", encoding="utf8") as infographic_data_file:
+        json.dump(data.current_data, infographic_data_file, indent=4, ensure_ascii=False)

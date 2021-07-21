@@ -180,13 +180,13 @@ def save_vaccination_processed_data():
     processed_data["date"] = str_date
     processed_data["eta_threshold_target"] = str_eta_target
     processed_data["eta_threshold_total"] = str_eta_total
-    with open("data/data_vaccination", "w") as vaccination_data_file:
-        json.dump(processed_data, vaccination_data_file, indent=4)
+    with open("data/data_vaccination", "w", encoding="utf8") as vaccination_data_file:
+        json.dump(processed_data, vaccination_data_file, indent=4, ensure_ascii=False)
 
 
 def load_vaccination_data():
     try:
-        with open("data/data_vaccination", "r") as vaccination_data_file:
+        with open("data/data_vaccination", "r", encoding="utf8") as vaccination_data_file:
             file_data = json.load(vaccination_data_file)
             datetime_date = [datetime.strptime(x, '%Y-%m-%d')
                              for x in file_data["date"]]

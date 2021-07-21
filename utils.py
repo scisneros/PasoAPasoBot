@@ -49,3 +49,10 @@ def send_long_message(bot, **params):
 
 def format_int(number):
     return '{:,}'.format(int(number)).replace(',','.')
+
+
+def searchBySlug(slug, data):
+    for item in data:
+        if item.get("slug", "") == slug:
+            return item
+    return None
