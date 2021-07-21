@@ -42,6 +42,8 @@ def comuna(update, context):
                 comuna_copy = comuna.copy()
                 comuna_copy["index"] = result_index
                 matches.append(comuna_copy)
+    matches.sort(key=lambda comuna: comuna["nombre"])
+    matches.sort(key=lambda comuna: comuna["index"])
 
     message = ""
     if len(matches) > MAX_RESULTS:
