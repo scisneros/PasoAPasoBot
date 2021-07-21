@@ -150,16 +150,16 @@ def notify_vaccination_changes(bot):
     message += f"<b>Segunda vacuna:</b> {second_str}\n"
     message += f"<b>Vacuna dosis única:</b> {unique_str}\n\n"
 
-    message += f"<b>Dosis completa (2da + Única):</b> {done_str}\n"
+    message += f"<b>Esquema completo (2da o Única):</b> {done_str}\n"
     message += f"<b>Población objetivo:</b> {target_str} mayores de 12 años\n"
     message += f"<b>Progreso:</b> {percentage_str} de la población objetivo\n\n"
 
-    message += f"<b>Vacunas del día:</b> {delta_str}\n"
-    message += f"<b>Promedio semanal:</b> {ma_str} vacs/día\n\n"
-    message += f"<b>🗓 Estimación dosis completa en {int(TARGET_POPULATION_THRESHOLD*100)}% de la población objetivo:</b>\n"
+    message += f"<b>Esquemas completos del día:</b> {delta_str}\n"
+    message += f"<b>Promedio semanal:</b> {ma_str} esquemas completos por día\n\n"
+    message += f"<b>🗓 Estimación esquema completo en {int(TARGET_POPULATION_THRESHOLD*100)}% de la población objetivo:</b>\n"
     message += f"<i>{target_with_threshold} mayores de 12 años</i>\n"
     message += f"{eta_target_str} ({days_left_target} días)\n\n"
-    message += f"<b>🗓 Estimación dosis completa en {int(TOTAL_POPULATION_THRESHOLD*100)}% de la población total:</b>\n"
+    message += f"<b>🗓 Estimación esquema completo en {int(TOTAL_POPULATION_THRESHOLD*100)}% de la población total:</b>\n"
     message += f"<i>{total_with_threshold} personas</i>\n"
     message += f"{eta_total_str} ({days_left_total} días)\n"
 
