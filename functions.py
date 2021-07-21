@@ -101,6 +101,15 @@ def notify_changes(bot, changes, up_count, down_count):
                       text=message)
 
 
+def get_stats():
+    counts = [0, 0, 0, 0, 0]
+    for region in data.current_data["regiones"]:
+        for comuna in region["comunas"]:
+            counts[int(comuna["paso"]) - 1] += 1
+    
+    return counts
+
+
 def save_data():
     with open("data/data_comunas", "w", encoding="utf8") as infographic_data_file:
         json.dump(data.current_data, infographic_data_file, indent=4, ensure_ascii=False)
