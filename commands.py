@@ -35,13 +35,19 @@ def comuna(update, context):
         return
     slug_arg = slugify(arg)
     matches = []
-    if slug_arg:
-        matches = [{"name": comuna, **vals} for comuna, vals in data.current_data.items() if vals["slug"].find(slug_arg) >= 0]
+    for region in data.current_data["regiones"]:
+        for comuna in region["comunas"]:
+            result_index = comuna["slug"].find(slug_arg)
+            if result_index >= 0:
+                comuna_copy = comuna.copy()
+                comuna_copy["index"] = result_index
+                matches.append(comuna_copy)
+
     message = ""
     if len(matches) > MAX_RESULTS:
         message += f"<i>Mostrando {MAX_RESULTS} resultados de {len(matches)}:</i>\n"
     for match in matches[:MAX_RESULTS]:
-        message += f"{PASOS_EMOJIS[int(match['paso'])]} <b>{match['name']}</b> - Paso {match['paso']} {match['info']}\n"
+        message += f"{PASOS_EMOJIS[int(match['paso'])]} <b>{match['nombre']}</b> - Paso {match['paso']} {match['info']}\n"
     
     if not matches:
         try_msg(context.bot,
