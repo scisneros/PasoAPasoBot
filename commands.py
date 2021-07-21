@@ -1,4 +1,4 @@
-from functions import get_stats
+from functions import get_steps_counts
 from constants import MAX_RESULTS, PASOS_EMOJIS
 import os
 from datetime import datetime
@@ -62,7 +62,7 @@ def comuna_private(update, context):
 
 def estadisticas(update, context):
     logger.info("[Command /estadisticas]")
-    counts = get_stats()
+    counts = get_steps_counts()
     message = "Comunas por paso:\n"
     for i in range(len(counts)):
         message += f"{PASOS_EMOJIS[i+1]} <b>Paso {i+1}</b>: {counts[i]}\n"

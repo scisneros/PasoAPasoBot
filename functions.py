@@ -101,7 +101,7 @@ def notify_changes(bot, changes, up_count, down_count):
                       text=message)
 
 
-def get_stats():
+def get_steps_counts():
     counts = [0, 0, 0, 0]
     for region in data.current_data["regiones"]:
         for comuna in region["comunas"]:
