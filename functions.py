@@ -96,11 +96,12 @@ def notify_changes(bot, changes, counts):
     for i in range(len(new_counts)):
         message += f"{PASOS_EMOJIS[i+1]} <b>Paso {i+1}</b>: {new_counts[i]} [+{counts['enter'][i]}, -{counts['leave'][i]}]\n"
     message += "\n"
-    #current_day = int(datetime.now().strftime('%w'))
-    current_day = 1
+    current_day = int(datetime.now().strftime('%w'))
     if current_day in CHANGE_DAY:
-        message += f"<b>Avances</b> vigentes desde el <b>{CHANGE_DAY[current_day]['up']['day']}</b> a las {CHANGE_DAY[current_day]['up']['time']}\n"
-        message += f"<b>Retrocesos</b> vigentes desde el <b>{CHANGE_DAY[current_day]['down']['day']}</b> a las {CHANGE_DAY[current_day]['down']['time']}\n"
+        if counts['up']:
+            message += f"<b>Avances</b> vigentes desde el <b>{CHANGE_DAY[current_day]['up']['day']}</b> a las {CHANGE_DAY[current_day]['up']['time']}\n"
+        if counts['down']:
+            message += f"<b>Retrocesos</b> vigentes desde el <b>{CHANGE_DAY[current_day]['down']['day']}</b> a las {CHANGE_DAY[current_day]['down']['time']}\n"
     try_msg(bot,
             chat_id=channel_id,
             parse_mode="HTML",

@@ -19,16 +19,19 @@ PASOS_NAMES = {
     5: "Apertura Avanzada",
 }
 
+CHANGE_DAY = {}
+'''
 CHANGE_DAY = {
-    1: {  # Monday
-        "up": {"day": "martes", "time": "5:00am"},
-        "down": {"day": "jueves", "time": "5:00am"}
+    1: {  # Lunes
+        "up": {"day": "miércoles", "time": "5:00am"},
+        "down": {"day": "miércoles", "time": "5:00am"}
     },
-    4: {  # Thursday
+    4: {  # Jueves
         "up": {"day": "lunes", "time": "5:00am"},
         "down": {"day": "sábado", "time": "5:00am"}
     }
 }
+'''
 
 MA_DAYS = 7
 MA_SMOOTHING = 5
