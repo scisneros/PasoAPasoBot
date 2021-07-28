@@ -40,7 +40,7 @@ def main():
     load_vaccination_data()
 
     jq.run_repeating(check_for_changes, interval=constants.FETCH_INTERVAL, first=(1 if check_first else None), name="job_fetch")
-    jq.run_repeating(check_for_vaccination_changes, interval=constants.FETCH_INTERVAL_VAC, first=1, name="job_vaccination")
+    # jq.run_repeating(check_for_vaccination_changes, interval=constants.FETCH_INTERVAL_VAC, first=1, name="job_vaccination")
 
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('comuna', comuna))
